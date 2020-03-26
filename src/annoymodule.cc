@@ -54,6 +54,11 @@ typedef signed __int32    int32_t;
     #define PyInt_FromLong PyLong_FromLong 
 #endif
 
+#ifdef MS_WINDOWS
+    #define FS_ENCODEING "mbcs"
+#else
+    #define FS_ENCODEING "utf-8"
+#endif
 
 template class AnnoyIndexInterface<int32_t, float>;
 
@@ -198,7 +203,7 @@ py_an_load(py_annoy *self, PyObject *args, PyObject *kwargs) {
   if (!self->ptr) 
     return NULL;
   static char const * kwlist[] = {"fn", "prefault", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|b", (char**)kwlist, &filename, &prefault))
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "es|b", (char**)kwlist, FS_ENCODEING, &filename, &prefault))
     return NULL;
 
   if (!self->ptr->load(filename, prefault, &error)) {
@@ -217,7 +222,7 @@ py_an_save(py_annoy *self, PyObject *args, PyObject *kwargs) {
   if (!self->ptr) 
     return NULL;
   static char const * kwlist[] = {"fn", "prefault", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|b", (char**)kwlist, &filename, &prefault))
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "es|b", (char**)kwlist, FS_ENCODEING, &filename, &prefault))
     return NULL;
 
   if (!self->ptr->save(filename, prefault, &error)) {
@@ -394,7 +399,7 @@ py_an_on_disk_build(py_annoy *self, PyObject *args, PyObject *kwargs) {
   if (!self->ptr)
     return NULL;
   static char const * kwlist[] = {"fn", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", (char**)kwlist, &filename))
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "es", (char**)kwlist, FS_ENCODEING, &filename))
     return NULL;
 
   if (!self->ptr->on_disk_build(filename, &error)) {
